@@ -22,13 +22,15 @@ echo "Brick path: $brickpath"
 
 base_uri="https://www.uniprot.org/"
 mkdir $buildpath;
+export TMPDIR=$buildpath/tmp
+mkdir -p $TMPDIR
 export buildpath brickpath base_uri
 find $downloadpath -type f -name '*.rdf.xz' | sort \
-	| parallel --bar '
+	| parallel -J ./parallel.prf --bar '
 		RDF=$buildpath/{/.};
-		xz -T1 -dk < {} > "$RDF";
-		$JENA_HOME/bin/riot --syntax=rdfxml --output=ntriples "$RDF" > "$RDF".nt;
-		rm -v "$RDF";
-		rdf2hdt -i -p -B "$base_uri" "$RDF".nt "$brickpath"/"$(basename "$RDF" .rdf).hdt";
-		rm -v "$RDF".nt
+		RDF_NT_GZ="$RDF".nt.gz
+		[ -f $RDF_NT_GZ ] || xz -T1 -dk < {} \
+			| $JENA_HOME/bin/riot --syntax=rdfxml --stream=ntriples --compress | sponge $RDF_NT_GZ;
+		[ -f $RDF_NT_GZ ] && rdf2hdt -i -p -B "$base_uri" $RDF_NT_GZ "$brickpath"/"$(basename "$RDF" .rdf).hdt" \
+			&& rm -v $RDF_NT_GZ;
 		'
