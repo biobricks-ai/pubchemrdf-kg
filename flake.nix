@@ -17,6 +17,7 @@
         devShells.default = mkShell {
           buildInputs = [
             hdt-cpp.packages.${system}.default
+            librdf
             aria2
             (lib.hiPrio pkgs.parallel-full) # prefer GNU Parallel over `moreutils`
             moreutils
