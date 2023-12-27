@@ -21,7 +21,8 @@ stages:
       - stages/01_download.sh
       - checksum
     outs:
-      - download
+      - download:
+          persist: true
   build: 
     cmd: stages/02_build.sh
     deps:
