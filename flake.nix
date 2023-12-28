@@ -9,14 +9,20 @@
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hdt-java = {
+      url = "github:insilica/nix-hdt-java";
+      inputs.flake-utils.follows = "flake-utils";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, hdt-cpp }:
+  outputs = { self, nixpkgs, flake-utils, hdt-cpp, hdt-java }:
     flake-utils.lib.eachDefaultSystem (system:
       with import nixpkgs { inherit system; }; {
         devShells.default = mkShell {
           buildInputs = [
             hdt-cpp.packages.${system}.default
+            hdt-java.packages.${system}.default
             librdf
             aria2
             (lib.hiPrio pkgs.parallel-full) # prefer GNU Parallel over `moreutils`

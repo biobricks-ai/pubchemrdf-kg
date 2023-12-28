@@ -41,6 +41,29 @@
         "type": "github"
       }
     },
+    "hdt-java": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1703427866,
+        "narHash": "sha256-v9bbOOPWvFNqo/ZajeJtPDMon55Mecp2pKJazH2ym/4=",
+        "owner": "insilica",
+        "repo": "nix-hdt-java",
+        "rev": "c93517364fbed1fef70736834cf2661a1470a21f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "insilica",
+        "repo": "nix-hdt-java",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1695559356,
@@ -61,6 +84,7 @@
       "inputs": {
         "flake-utils": "flake-utils",
         "hdt-cpp": "hdt-cpp",
+        "hdt-java": "hdt-java",
         "nixpkgs": "nixpkgs"
       }
     },
