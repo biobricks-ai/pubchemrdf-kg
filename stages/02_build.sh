@@ -8,6 +8,8 @@ set -euo pipefail
 localpath=$(pwd)
 echo "Local path: $localpath"
 
+eval $( $localpath/vendor/biobricks-script-lib/activate.sh )
+
 # Set download path
 downloadpath="$localpath/download"
 echo "Download path: $downloadpath"
@@ -41,17 +43,12 @@ find $downloadpath -type f -name '*.rdf.xz' | sort \
 		set -euo pipefail;
 
 		RDF=$buildpath/{/.};
-		RDF_NT_GZ_TMP=$(mktemp --suffix=.nt.gz);
-		RDF_NT_GZ="$RDF".nt.gz;
 		RDF_HDT="$buildpath_prestage"/"$(basename "$RDF" .rdf).hdt";
 
 		if [ ! -s $RDF_HDT ]; then
-			[ -s $RDF_NT_GZ ] || xz -T1 -dk < {} \
-				| rapper --input rdfxml --output ntriples -  "$base_uri" | gzip > $RDF_NT_GZ_TMP \
-				&& [ -s $RDF_NT_GZ_TMP ] \
-				&& mv -v $RDF_NT_GZ_TMP $RDF_NT_GZ;
-			rdf2hdt -i -p -B "$base_uri" $RDF_NT_GZ $RDF_HDT \
-				&& rm -v $RDF_NT_GZ;
+			xz -T1 -dk < {} \
+				| rapper --input rdfxml --output ntriples - "$base_uri" \
+				| rdf2hdtcat-parpipe $RDF_HDT
 		fi
 		'
 
