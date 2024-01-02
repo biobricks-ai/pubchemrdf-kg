@@ -45,10 +45,11 @@ find $downloadpath -type f -name '*.rdf.xz' | sort \
 		RDF=$buildpath/{/.};
 		RDF_HDT="$buildpath_prestage"/"$(basename "$RDF" .rdf).hdt";
 
+		export RDF2HDTCAT_JAVA_OPTS="-Xmx24g";
 		if [ ! -s $RDF_HDT ]; then
 			xz -T1 -dk < {} \
 				| rapper --input rdfxml --output ntriples - "$base_uri" \
-				| rdf2hdtcat-parpipe $RDF_HDT
+				| rdf2hdtcat-parpipe $base_uri $RDF_HDT
 		fi
 		'
 
