@@ -47,6 +47,7 @@ find $downloadpath -type f -name '*.rdf.xz' | sort \
 
 		export RDF2HDTCAT_JAVA_OPTS="-Xmx24g";
 		if [ ! -s $RDF_HDT ]; then
+			echo "Processing {}"
 			xz -T1 -dk < {} \
 				| rapper --input rdfxml --output ntriples - "$base_uri" \
 				| rdf2hdtcat-parpipe $base_uri $RDF_HDT
