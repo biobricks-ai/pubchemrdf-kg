@@ -54,4 +54,8 @@ find $downloadpath -type f -name '*.rdf.xz' | sort \
 		fi
 		'
 
+find $downloadpath/ -maxdepth 1 \
+	-type f \! -name '*.rdf.xz' \
+	-exec cp -v {} $brickpath/ \;
+
 mv -v $buildpath_prestage/* $brickpath/
