@@ -39,6 +39,10 @@ mkdir -p $buildpath_prestage
 
 export buildpath brickpath base_uri
 find $downloadpath -type f -name '*.rdf.xz' | sort \
+	| grep -vFf <( cat <<'EOF' # remove empty files
+uniparc_patents.rdf.xz
+EOF
+	) \
 	| parallel -J ./parallel.prf --bar '
 		set -euo pipefail;
 
