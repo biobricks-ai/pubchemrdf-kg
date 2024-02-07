@@ -14,12 +14,12 @@ stages:
     deps:
       - stages/00_invalidate.sh
     outs:
-      - checksum
+      - void
   download:
     cmd: stages/01_download.sh
     deps:
       - stages/01_download.sh
-      - checksum
+      - void
     outs:
       - download:
           persist: true

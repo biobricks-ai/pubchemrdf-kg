@@ -1,5 +1,5 @@
 {
-  description = "UniProt KG BioBrick";
+  description = "PubChemRDF KG BioBrick";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-23.05";
@@ -24,7 +24,7 @@
             hdt-cpp.packages.${system}.default
             hdt-java.packages.${system}.default
             librdf
-            aria2
+            lftp
             (lib.hiPrio pkgs.parallel-full) # prefer GNU Parallel over `moreutils`
             moreutils
           ];

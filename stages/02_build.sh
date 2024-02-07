@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-# Script to convert RDF/XML to RDF HDT
+# Script to convert Turtle to RDF HDT
 
 # Get local path
 localpath=$(pwd)
@@ -24,7 +24,7 @@ brickpath="$localpath/brick"
 mkdir -p $brickpath
 echo "Brick path: $brickpath"
 
-base_uri="https://www.uniprot.org/"
+base_uri="http://rdf.ncbi.nlm.nih.gov/pubchem/"
 
 # Set TMPDIR on same filesystem
 export BUILD_TMPDIR=$buildpath/tmp
@@ -37,29 +37,25 @@ export TMPDIR=$BUILD_TMPDIR
 export buildpath_prestage=$buildpath/prestage
 mkdir -p $buildpath_prestage
 
-export buildpath brickpath base_uri
-find $downloadpath -type f -name '*.rdf.xz' | sort \
-	| grep -vFf <( cat <<'EOF' # remove empty files
-uniparc_patents.rdf.xz
-EOF
-	) \
+export downloadpath buildpath brickpath base_uri
+find $downloadpath -type f -name '*.ttl.gz' | sort \
 	| parallel -J ./parallel.prf --bar '
 		set -euo pipefail;
 
-		RDF=$buildpath/{/.};
-		RDF_HDT="$buildpath_prestage"/"$(basename "$RDF" .rdf).hdt";
+		RDF_HDT_DIR_REL="$(realpath -s --relative-to="$downloadpath" {})";
+		RDF_HDT="$buildpath_prestage"/"$RDF_HDT_DIR_REL"/"$(basename "$RDF" .rdf).hdt";
 
 		export RDF2HDTCAT_JAVA_OPTS="-Xmx24g";
 		if [ ! -s $RDF_HDT ]; then
 			echo "Processing {}"
-			xz -T1 -dk < {} \
-				| rapper --input rdfxml --output ntriples - "$base_uri" \
+			gzip -dk < {} \
+				| rapper --input turtle --output ntriples - "$base_uri" \
 				| rdf2hdtcat-parpipe $base_uri $RDF_HDT
 		fi
 		'
 
 find $downloadpath/ -maxdepth 1 \
-	-type f \! -name '*.rdf.xz' \
+	-type f \! -name '*.ttl.gz' \
 	-exec cp -v {} $brickpath/ \;
 
 mv -v $buildpath_prestage/* $brickpath/

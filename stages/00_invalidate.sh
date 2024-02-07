@@ -6,16 +6,15 @@
 localpath=$(pwd)
 echo "Local path: $localpath"
 
-# Define the release URL for the dataset
-checksum_url="https://ftp.uniprot.org/pub/databases/uniprot/current_release/rdf/RELEASE.metalink"
+# Define the VoID URL for the dataset
+void_url="https://ftp.ncbi.nlm.nih.gov/pubchem/RDF/void.ttl"
 
-# Create the checksum directory
-checksumpath="$localpath/checksum"
-echo "Checksum path: $checksumpath"
-mkdir -p "$checksumpath"
-cd $checksumpath;
+# Create the VoID directory
+voidpath="$localpath/void"
+echo "VoID path: $voidpath"
+mkdir -p "$voidpath"
 
 # Download file
-wget -P $checksumpath $checksum_url
+wget -P $voidpath $void_url
 
 echo "Download done."
