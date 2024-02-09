@@ -19,5 +19,28 @@ mkdir -p "$downloadpath"
 # Download files
 (
 	cd "$downloadpath";
-	lftp -c "connect $ftp_url ; mirror --verbose -c -P $ftp_url"; \
+	wget -r -A ttl.gz -nH --cut-dirs=3 -P compound ${ftp_url}/compound/general
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/substance
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/descriptor
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/synonym
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/inchikey
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/bioassay
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/measuregroup
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/endpoint
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/protein
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/pathway
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/conserveddomain
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/gene
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/source
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/concept
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/reference
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/disease
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/taxonomy
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/cell
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/author
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/book
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/journal
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/grant
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/organization
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/cooccurrence
 );

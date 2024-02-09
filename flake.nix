@@ -24,7 +24,7 @@
             hdt-cpp.packages.${system}.default
             hdt-java.packages.${system}.default
             librdf
-            lftp
+            wget
             (lib.hiPrio pkgs.parallel-full) # prefer GNU Parallel over `moreutils`
             moreutils
           ];
