@@ -42,8 +42,12 @@ find $downloadpath -type f -name '*.ttl.gz' | sort \
 	| parallel -J ./parallel.prf --bar '
 		set -euo pipefail;
 
-		RDF_HDT_DIR_REL="$(realpath -s --relative-to="$downloadpath" {})";
-		RDF_HDT="$buildpath_prestage"/"$RDF_HDT_DIR_REL"/"$(basename "$RDF" .rdf).hdt";
+		RDF_BASENAME="$(basename {} .ttl.gz)";
+		RDF_DIR_REL="$(realpath -s --relative-to="$downloadpath" $(dirname {}))";
+		RDF_HDT_DIR="$buildpath_prestage"/"$RDF_DIR_REL";
+		RDF_HDT="$RDF_HDT_DIR"/"$RDF_BASENAME.hdt";
+
+		mkdir -p $RDF_HDT_DIR;
 
 		export RDF2HDTCAT_JAVA_OPTS="-Xmx24g";
 		if [ ! -s $RDF_HDT ]; then
