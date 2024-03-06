@@ -13,6 +13,7 @@ stages:
     cmd: stages/00_invalidate.sh
     deps:
       - stages/00_invalidate.sh
+      - "https://ftp.ncbi.nlm.nih.gov/pubchem/RDF/void.ttl"
     outs:
       - void
   download:
