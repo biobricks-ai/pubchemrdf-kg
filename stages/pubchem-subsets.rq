@@ -1,0 +1,34 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX freq: <http://purl.org/cld/freq/>
+PREFIX pav: <http://purl.org/pav/2.0/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX void: <http://rdfs.org/ns/void#>
+PREFIX voag: <http://voag.linkedmodel.org/schema/voag#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX : <http://rdf.ncbi.nlm.nih.gov/pubchem/void.ttl#>
+
+PREFIX download: <ftp://ftp.ncbi.nlm.nih.gov/pubchem/RDF/>
+
+SELECT
+	?name
+	?graph
+	( GROUP_CONCAT($file;separator="|") AS ?files  )
+{
+	?dataset a               void:Dataset  ;
+	         void:uriSpace   ?uriSpace     ;
+	         void:dataDump   ?dataDump     .
+
+	# Remove / at end of URI string:
+	BIND( REPLACE(?uriSpace, '/$', '') AS ?graph ) .
+
+	# Remove download prefix:
+	BIND( STRAFTER( STR(?dataDump), STR(download:) ) AS ?file ) .
+
+	# Remove VoID prefix:
+	BIND( STRAFTER( STR(?dataset), STR(:) ) AS ?name ) .
+}
+GROUP BY ?name ?graph
+ORDER BY ?file

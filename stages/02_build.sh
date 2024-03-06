@@ -38,6 +38,20 @@ export buildpath_prestage=$buildpath/prestage
 mkdir -p $buildpath_prestage
 
 export downloadpath buildpath brickpath base_uri
+
+$JENA_HOME/bin/jena arq.sparql \
+	--quiet \
+	--data=download/RDF/void.ttl \
+	--query=stages/pubchem-subsets.rq \
+	--results=CSV \
+	| grep -v '^ERROR StatusConsoleListener' \
+	| parallel -j1 --csv --header : --pipe --cat '
+		NAME=$( cut -d, -f1 {} )
+		GRAPH=$( cut -d, -f2 {} )
+		echo $NAME $GRAPH
+	'
+
+exit 1;
 find $downloadpath -type f -name '*.ttl.gz' | sort \
 	| parallel -J ./parallel.prf --bar '
 		set -euo pipefail;

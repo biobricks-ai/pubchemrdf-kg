@@ -23,11 +23,16 @@
           buildInputs = [
             hdt-cpp.packages.${system}.default
             hdt-java.packages.${system}.default
+            apache-jena
             librdf
             wget
+            perlPackages.TextCSV
             (lib.hiPrio pkgs.parallel-full) # prefer GNU Parallel over `moreutils`
             moreutils
           ];
+          env = {
+            JENA_HOME = "${apache-jena}";
+          };
         };
       });
 }
