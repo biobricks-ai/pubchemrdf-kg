@@ -15,7 +15,7 @@ PREFIX download: <ftp://ftp.ncbi.nlm.nih.gov/pubchem/RDF/>
 SELECT
 	?name
 	?graph
-	( GROUP_CONCAT($file;separator="|") AS ?files  )
+	?file
 {
 	?dataset a               void:Dataset  ;
 	         void:uriSpace   ?uriSpace     ;
@@ -30,5 +30,4 @@ SELECT
 	# Remove VoID prefix:
 	BIND( STRAFTER( STR(?dataset), STR(:) ) AS ?name ) .
 }
-GROUP BY ?name ?graph
-ORDER BY ?file
+ORDER BY ?name ?file

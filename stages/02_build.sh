@@ -4,6 +4,8 @@ set -euo pipefail
 
 # Script to convert Turtle to RDF HDT
 
+export LC_ALL="C"
+
 # Get local path
 localpath=$(pwd)
 echo "Local path: $localpath"
@@ -39,38 +41,57 @@ mkdir -p $buildpath_prestage
 
 export downloadpath buildpath brickpath base_uri
 
+export PARALLEL_COLOPTS="--colsep \t --header :"
+
+process_rdf_group() {
+	group_file="$1"
+
+	export NAME=$( head -2 $group_file | parallel $PARALLEL_COLOPTS 'echo {=name uq() =}' ) ;
+	export GRAPH_URI=$( head -2 $group_file | parallel $PARALLEL_COLOPTS 'echo {=graph uq() =}' ) ;
+	echo $NAME $GRAPH_URI >&2 ;
+
+	export RDF_BASENAME="$NAME";
+	export RDF_HDT_DIR="$buildpath_prestage"/"$RDF_BASENAME";
+	export RDF_HDT="$RDF_HDT_DIR"/"pc_$RDF_BASENAME.hdt";
+
+	if [ -s $RDF_HDT ]; then
+		return
+	fi
+
+	mkdir -p $RDF_HDT_DIR;
+
+	export RDF2HDTCAT_JAVA_OPTS="-Xmx24g";
+
+	< $group_file \
+	parallel --line-buffer -J ./parallel.prf --bar $PARALLEL_COLOPTS '
+		set -euo pipefail;
+
+		FILE=download/{=file uq() =}
+		if [ -r $FILE ]; then
+			echo "Processing $FILE" >&2
+			gzip -dk < $FILE \
+				| rapper --input turtle --output ntriples - "$GRAPH_URI"
+		else
+			echo "Skipping $FILE: does not exist" >&2
+		fi
+	' \
+	| rdf2hdtcat-parpipe $GRAPH_URI $RDF_HDT
+}
+export -f process_rdf_group;
+
 $JENA_HOME/bin/jena arq.sparql \
 	--quiet \
 	--data=download/RDF/void.ttl \
 	--query=stages/pubchem-subsets.rq \
-	--results=CSV \
+	--results=TSV \
 	| grep -v '^ERROR StatusConsoleListener' \
-	| parallel -j1 --csv --header : --pipe --cat '
-		NAME=$( cut -d, -f1 {} )
-		GRAPH=$( cut -d, -f2 {} )
-		echo $NAME $GRAPH
+	| perl -pe '$. == 1 and tr/?//d' \
+	| parallel -u -j1 -kN1 --blocksize 10M \
+		$PARALLEL_COLOPTS --group-by name --cat '
+		process_rdf_group {} \
 	'
 
-exit 1;
-find $downloadpath -type f -name '*.ttl.gz' | sort \
-	| parallel -J ./parallel.prf --bar '
-		set -euo pipefail;
-
-		RDF_BASENAME="$(basename {} .ttl.gz)";
-		RDF_DIR_REL="$(realpath -s --relative-to="$downloadpath" $(dirname {}))";
-		RDF_HDT_DIR="$buildpath_prestage"/"$RDF_DIR_REL";
-		RDF_HDT="$RDF_HDT_DIR"/"$RDF_BASENAME.hdt";
-
-		mkdir -p $RDF_HDT_DIR;
-
-		export RDF2HDTCAT_JAVA_OPTS="-Xmx24g";
-		if [ ! -s $RDF_HDT ]; then
-			echo "Processing {}"
-			gzip -dk < {} \
-				| rapper --input turtle --output ntriples - "$base_uri" \
-				| rdf2hdtcat-parpipe $base_uri $RDF_HDT
-		fi
-		'
+#| perl -pe 'undef $_ if $. > 1 && ! /"gene"/' \
 
 find $downloadpath/ -maxdepth 1 \
 	-type f \! -name '*.ttl.gz' \
