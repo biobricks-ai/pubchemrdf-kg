@@ -11,7 +11,7 @@ echo "Local path: $localpath"
 # Define the FTP URL for the dataset
 # https://ftp.ncbi.nlm.nih.gov/pubchem/RDF/
 # ftp://ftp.ncbi.nlm.nih.gov/pubchem/RDF/
-ftp_url="ftp://ftp.ncbi.nlm.nih.gov/pubchem/RDF/"
+ftp_url="ftp://ftp.ncbi.nlm.nih.gov/pubchem/RDF"
 
 # Create the download directory
 downloadpath="$localpath/download"
