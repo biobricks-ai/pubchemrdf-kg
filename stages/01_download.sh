@@ -21,6 +21,7 @@ mkdir -p "$downloadpath"
 # Download files
 (
 	cd "$downloadpath";
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/anatomy
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/author
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/bioassay
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/book
@@ -38,6 +39,7 @@ mkdir -p "$downloadpath"
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/journal
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/measuregroup
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/organization
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/patent
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/pathway
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/protein
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/reference
