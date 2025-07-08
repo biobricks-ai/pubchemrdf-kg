@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -eu
+
 # Script to download files
 
 # Get local [ath]
