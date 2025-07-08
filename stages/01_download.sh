@@ -19,7 +19,7 @@ mkdir -p "$downloadpath"
 # Download files
 (
 	cd "$downloadpath";
-	wget -r -A ttl.gz -nH --cut-dirs=3 -P compound ${ftp_url}/compound/general
+	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/compound/general
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/substance
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/descriptor
 	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/synonym
