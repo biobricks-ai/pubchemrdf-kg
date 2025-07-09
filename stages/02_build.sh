@@ -83,7 +83,7 @@ export -f process_rdf_group;
 
 $JENA_HOME/bin/jena arq.sparql \
 	--quiet \
-	--data=download/RDF/void.ttl \
+	--data=void/void.ttl \
 	--query=stages/pubchem-subsets.rq \
 	--results=TSV \
 	| grep -v '^ERROR StatusConsoleListener' \
