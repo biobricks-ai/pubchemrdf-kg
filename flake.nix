@@ -21,13 +21,17 @@
             librdf
             wget
             perlPackages.TextCSV
-            (lib.hiPrio pkgs.parallel-full) # prefer GNU Parallel over `moreutils`
             moreutils
           ] ++ biobricks-script-lib.packages.${system}.buildInputs;
 
           env = {
             JENA_HOME = "${apache-jena}";
           };
+
+          shellHook = ''
+            # Activate biobricks-script-lib environment
+            eval $(${biobricks-script-lib.packages.${system}.activateScript})
+          '';
         };
       });
 }
