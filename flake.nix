@@ -10,25 +10,13 @@
       inputs.flake-utils.follows = "flake-utils";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    hdt-cpp = {
-      url = "github:insilica/nix-hdt";
-      inputs.flake-utils.follows = "flake-utils";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hdt-java = {
-      url = "github:insilica/nix-hdt-java";
-      inputs.flake-utils.follows = "flake-utils";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
-  outputs = { self, nixpkgs, flake-utils, biobricks-script-lib, hdt-cpp, hdt-java }:
+  outputs = { self, nixpkgs, flake-utils, biobricks-script-lib }:
     flake-utils.lib.eachDefaultSystem (system:
       with import nixpkgs { inherit system; }; {
         devShells.default = mkShell {
           buildInputs = [
-            hdt-cpp.packages.${system}.default
-            hdt-java.packages.${system}.default
             apache-jena
             librdf
             wget
