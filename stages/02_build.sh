@@ -63,6 +63,9 @@ process_rdf_group() {
 	mkdir -p $RDF_HDT_DIR;
 
 	export RDF2HDTCAT_JAVA_OPTS="-Xmx24g";
+	(
+	export TMPDIR=$BUILD_TMPDIR/$NAME
+	mkdir -p $TMPDIR
 
 	< $group_file \
 	parallel --line-buffer -J ./parallel.prf --bar $PARALLEL_COLOPTS '
@@ -78,6 +81,7 @@ process_rdf_group() {
 		fi
 	' \
 	| rdf2hdtcat-parpipe $GRAPH_URI $RDF_HDT
+	)
 }
 export -f process_rdf_group;
 
