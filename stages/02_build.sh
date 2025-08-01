@@ -79,6 +79,10 @@ process_rdf_group() {
 	HDTCAT_JAVA_OPTS="${HDTCAT_JAVA_OPTS:+"$HDTCAT_JAVA_OPTS "}-XX:MaxRAMPercentage=90.0"
 	export HDTCAT_JAVA_OPTS
 
+	# DEBUG
+	JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:+"$JAVA_TOOL_OPTIONS "}-XX:OnOutOfMemoryError='kill -3 %p' -XX:+PrintClassHistogram"
+	#JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:+"$JAVA_TOOL_OPTIONS "}-Xlog:gc:/tmp/gc.log"
+	export JAVA_TOOL_OPTIONS
 	(
 	export TMPDIR=$BUILD_TMPDIR/$NAME
 	mkdir -p $TMPDIR
