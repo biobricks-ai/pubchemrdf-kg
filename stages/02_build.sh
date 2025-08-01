@@ -94,7 +94,7 @@ process_rdf_group() {
 		FILE=download/{=file uq() =}
 		if [ -r $FILE ]; then
 			echo "Processing $FILE" >&2
-			gzip -dk < $FILE \
+			pigz -dk < $FILE \
 				| rapper --input turtle --output ntriples - "$GRAPH_URI"
 		else
 			echo "Skipping $FILE: does not exist" >&2

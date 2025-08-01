@@ -22,6 +22,7 @@
             wget
             perlPackages.TextCSV
             moreutils
+            pigz
           ] ++ biobricks-script-lib.packages.${system}.buildInputs;
 
           env = {
