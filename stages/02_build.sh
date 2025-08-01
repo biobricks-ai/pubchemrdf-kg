@@ -45,6 +45,16 @@ export PARALLEL_COLOPTS="--colsep \t --header :"
 
 # https://ftp.ncbi.nlm.nih.gov/pubchem/RDF/void.ttl
 
+
+# Extract numeric values (in KiB) from /proc/meminfo
+get_kib_value() {
+	awk -v key="$1" '$1 == key ":" { print $2 }' /proc/meminfo
+}
+mem_kib=$(get_kib_value  MemTotal ); [ -n "$mem_kib"  ] || mem_kib=0
+swap_kib=$(get_kib_value SwapTotal); [ -n "$swap_kib" ] || swap_kib=0
+total_kib=$(expr "$mem_kib" + "$swap_kib")
+export total_mib=$(expr "$total_kib" / 1024)
+
 process_rdf_group() {
 	group_file="$1"
 
@@ -62,7 +72,13 @@ process_rdf_group() {
 
 	mkdir -p $RDF_HDT_DIR;
 
-	export RDF2HDTCAT_JAVA_OPTS="-Xmx24g";
+
+	#HDTCAT_JAVA_OPTS="${HDTCAT_JAVA_OPTS:+"$HDTCAT_JAVA_OPTS "}-Xmx24g";
+	HDTCAT_JAVA_OPTS="${HDTCAT_JAVA_OPTS:+"$HDTCAT_JAVA_OPTS "}-XX:MaxRAM=${total_mib}m"
+	HDTCAT_JAVA_OPTS="${HDTCAT_JAVA_OPTS:+"$HDTCAT_JAVA_OPTS "}-XX:MinRAMPercentage=25.0"
+	HDTCAT_JAVA_OPTS="${HDTCAT_JAVA_OPTS:+"$HDTCAT_JAVA_OPTS "}-XX:MaxRAMPercentage=90.0"
+	export HDTCAT_JAVA_OPTS
+
 	(
 	export TMPDIR=$BUILD_TMPDIR/$NAME
 	mkdir -p $TMPDIR
