@@ -19,7 +19,7 @@ echo "Download path: $downloadpath"
 mkdir -p "$downloadpath"
 
 download_subdomain() {
-	wget -r -A ttl.gz -nH --cut-dirs=2 "$@"
+	wget -r -A ttl.gz -N -nH --cut-dirs=2 "$@"
 }
 
 # Download files
