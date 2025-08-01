@@ -43,6 +43,8 @@ export downloadpath buildpath brickpath base_uri
 
 export PARALLEL_COLOPTS="--colsep \t --header :"
 
+# https://ftp.ncbi.nlm.nih.gov/pubchem/RDF/void.ttl
+
 process_rdf_group() {
 	group_file="$1"
 
