@@ -68,7 +68,7 @@ process_rdf_group() {
 	mkdir -p $TMPDIR
 
 	< $group_file \
-	parallel --line-buffer -J ./parallel.prf --bar $PARALLEL_COLOPTS '
+	parallel --line-buffer -J ./parallel-convert-split.prf --bar $PARALLEL_COLOPTS '
 		set -euo pipefail;
 
 		FILE=download/{=file uq() =}
@@ -93,7 +93,9 @@ $JENA_HOME/bin/jena arq.sparql \
 	| grep -v '^ERROR StatusConsoleListener' \
 	| perl -pe '$. == 1 and tr/?//d' \
 	| parallel -u -j1 -kN1 --blocksize 10M \
-		$PARALLEL_COLOPTS --group-by name --cat '
+		$PARALLEL_COLOPTS --group-by name --cat \
+		-J ./parallel-group.prf \
+		'
 		process_rdf_group {} \
 	'
 
