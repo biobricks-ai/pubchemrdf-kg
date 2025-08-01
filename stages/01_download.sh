@@ -18,33 +18,37 @@ downloadpath="$localpath/download"
 echo "Download path: $downloadpath"
 mkdir -p "$downloadpath"
 
+download_subdomain() {
+	wget -r -A ttl.gz -nH --cut-dirs=2 "$@"
+}
+
 # Download files
 (
 	cd "$downloadpath";
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/anatomy
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/author
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/bioassay
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/book
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/cell
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/compound/general
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/concept
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/conserveddomain
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/cooccurrence
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/descriptor
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/disease
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/endpoint
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/gene
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/grant
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/inchikey
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/journal
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/measuregroup
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/organization
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/patent
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/pathway
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/protein
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/reference
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/source
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/substance
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/synonym
-	wget -r -A ttl.gz -nH --cut-dirs=2 ${ftp_url}/taxonomy
+	download_subdomain ${ftp_url}/anatomy
+	download_subdomain ${ftp_url}/author
+	download_subdomain ${ftp_url}/bioassay
+	download_subdomain ${ftp_url}/book
+	download_subdomain ${ftp_url}/cell
+	download_subdomain ${ftp_url}/compound/general
+	download_subdomain ${ftp_url}/concept
+	download_subdomain ${ftp_url}/conserveddomain
+	download_subdomain ${ftp_url}/cooccurrence
+	download_subdomain ${ftp_url}/descriptor
+	download_subdomain ${ftp_url}/disease
+	download_subdomain ${ftp_url}/endpoint
+	download_subdomain ${ftp_url}/gene
+	download_subdomain ${ftp_url}/grant
+	download_subdomain ${ftp_url}/inchikey
+	download_subdomain ${ftp_url}/journal
+	download_subdomain ${ftp_url}/measuregroup
+	download_subdomain ${ftp_url}/organization
+	download_subdomain ${ftp_url}/patent
+	download_subdomain ${ftp_url}/pathway
+	download_subdomain ${ftp_url}/protein
+	download_subdomain ${ftp_url}/reference
+	download_subdomain ${ftp_url}/source
+	download_subdomain ${ftp_url}/substance
+	download_subdomain ${ftp_url}/synonym
+	download_subdomain ${ftp_url}/taxonomy
 );
