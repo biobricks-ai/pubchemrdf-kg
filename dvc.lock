@@ -1,0 +1,39 @@
+schema: '2.0'
+stages:
+  invalidate:
+    cmd: stages/00_invalidate.sh
+    deps:
+    - path: https://ftp.ncbi.nlm.nih.gov/pubchem/RDF/void.ttl
+      hash: md5
+      checksum: '"345fa-63fbfd66d937b"'
+      size: 214522
+    - path: stages/00_invalidate.sh
+      hash: md5
+      md5: 41802967b7775f9647a540f0d4449944
+      size: 387
+      isexec: true
+    outs:
+    - path: void
+      hash: md5
+      md5: 07bbdd62c009efd9535e2f068ef9790c.dir
+      size: 214522
+      nfiles: 1
+  download:
+    cmd: stages/01_download.sh
+    deps:
+    - path: stages/01_download.sh
+      hash: md5
+      md5: d861540a94960855c6e58793be33ad48
+      size: 1582
+      isexec: true
+    - path: void
+      hash: md5
+      md5: 07bbdd62c009efd9535e2f068ef9790c.dir
+      size: 214522
+      nfiles: 1
+    outs:
+    - path: download
+      hash: md5
+      md5: 8907f8d0f8033476864d8f26e86aa08c.dir
+      size: 182151314035
+      nfiles: 2012
