@@ -45,6 +45,16 @@ export PARALLEL_COLOPTS="--colsep \t --header :"
 
 # https://ftp.ncbi.nlm.nih.gov/pubchem/RDF/void.ttl
 
+
+# Extract numeric values (in KiB) from /proc/meminfo
+get_kib_value() {
+	awk -v key="$1" '$1 == key ":" { print $2 }' /proc/meminfo
+}
+mem_kib=$(get_kib_value  MemTotal ); [ -n "$mem_kib"  ] || mem_kib=0
+swap_kib=$(get_kib_value SwapTotal); [ -n "$swap_kib" ] || swap_kib=0
+total_kib=$(expr "$mem_kib" + "$swap_kib")
+export total_mib=$(expr "$total_kib" / 1024)
+
 process_rdf_group() {
 	group_file="$1"
 
@@ -62,34 +72,50 @@ process_rdf_group() {
 
 	mkdir -p $RDF_HDT_DIR;
 
-	export RDF2HDTCAT_JAVA_OPTS="-Xmx24g";
+
+	#HDTCAT_JAVA_OPTS="${HDTCAT_JAVA_OPTS:+"$HDTCAT_JAVA_OPTS "}-Xmx24g";
+	HDTCAT_JAVA_OPTS="${HDTCAT_JAVA_OPTS:+"$HDTCAT_JAVA_OPTS "}-XX:MaxRAM=${total_mib}m"
+	HDTCAT_JAVA_OPTS="${HDTCAT_JAVA_OPTS:+"$HDTCAT_JAVA_OPTS "}-XX:MinRAMPercentage=25.0"
+	HDTCAT_JAVA_OPTS="${HDTCAT_JAVA_OPTS:+"$HDTCAT_JAVA_OPTS "}-XX:MaxRAMPercentage=90.0"
+	export HDTCAT_JAVA_OPTS
+
+	# DEBUG
+	JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:+"$JAVA_TOOL_OPTIONS "}-XX:OnOutOfMemoryError='kill -3 %p' -XX:+PrintClassHistogram"
+	#JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS:+"$JAVA_TOOL_OPTIONS "}-Xlog:gc:/tmp/gc.log"
+	export JAVA_TOOL_OPTIONS
+	(
+	export TMPDIR=$BUILD_TMPDIR/$NAME
+	mkdir -p $TMPDIR
 
 	< $group_file \
-	parallel --line-buffer -J ./parallel.prf --bar $PARALLEL_COLOPTS '
+	parallel --line-buffer -J ./parallel-convert-split.prf --bar $PARALLEL_COLOPTS '
 		set -euo pipefail;
 
 		FILE=download/{=file uq() =}
 		if [ -r $FILE ]; then
 			echo "Processing $FILE" >&2
-			gzip -dk < $FILE \
+			pigz -dk < $FILE \
 				| rapper --input turtle --output ntriples - "$GRAPH_URI"
 		else
 			echo "Skipping $FILE: does not exist" >&2
 		fi
 	' \
 	| rdf2hdtcat-parpipe $GRAPH_URI $RDF_HDT
+	)
 }
 export -f process_rdf_group;
 
 $JENA_HOME/bin/jena arq.sparql \
 	--quiet \
-	--data=download/RDF/void.ttl \
+	--data=void/void.ttl \
 	--query=stages/pubchem-subsets.rq \
 	--results=TSV \
 	| grep -v '^ERROR StatusConsoleListener' \
 	| perl -pe '$. == 1 and tr/?//d' \
 	| parallel -u -j1 -kN1 --blocksize 10M \
-		$PARALLEL_COLOPTS --group-by name --cat '
+		$PARALLEL_COLOPTS --group-by name --cat \
+		-J ./parallel-group.prf \
+		'
 		process_rdf_group {} \
 	'
 
